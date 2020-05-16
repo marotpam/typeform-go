@@ -23,6 +23,19 @@ func TestCreateForm(t *testing.T) {
 	})
 }
 
+func TestRetrieveForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		c := newFakeServerClient(t)
+
+		svc := typeform.NewFormService(c)
+
+		f, err := svc.Retrieve(formIDRetrievedForm)
+		assert.Nil(t, err)
+
+		assert.Equal(t, formIDRetrievedForm, f.ID)
+	})
+}
+
 func TestDeleteForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		c := newFakeServerClient(t)

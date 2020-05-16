@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	formIDCreatedForm = "createdFormID"
-	formIDDeletedForm = "formToDelete"
+	formIDCreatedForm   = "createdFormID"
+	formIDRetrievedForm = "retrievedFormID"
+	formIDDeletedForm   = "formToDelete"
 
 	responsePayloadFormNotFound = `{"code":"FORM_NOT_FOUND","description":"Non existing form with uid %s"}`
 	responsePayloadUnauthorized = `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`
@@ -32,6 +33,7 @@ func newFakeTypeformServer() *typeformServer {
 	r.Use(accessTokenMiddleware)
 
 	r.HandleFunc("/forms", srv.createFormHandler).Methods(http.MethodPost)
+	r.HandleFunc("/forms/{id}", srv.retrieveFormHandler).Methods(http.MethodGet)
 	r.HandleFunc("/forms/{id}", srv.deleteFormHandler).Methods(http.MethodDelete)
 
 	srv.httpServer = httptest.NewServer(r)
@@ -53,6 +55,17 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 func (s *typeformServer) createFormHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, `{"id": "`+formIDCreatedForm+`"}`)
+}
+
+func (s *typeformServer) retrieveFormHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	vars := mux.Vars(r)
+	if vars["id"] != formIDRetrievedForm {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
+		return
+	}
+	fmt.Fprint(w, `{"id": "`+formIDRetrievedForm+`"}`)
 }
 
 func (s *typeformServer) deleteFormHandler(w http.ResponseWriter, r *http.Request) {
