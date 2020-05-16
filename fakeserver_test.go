@@ -12,6 +12,14 @@ import (
 	"github.com/marotpam/typeform-go"
 )
 
+const (
+	formIDCreatedForm = "createdFormID"
+	formIDDeletedForm = "formToDelete"
+
+	responsePayloadFormNotFound = `{"code":"FORM_NOT_FOUND","description":"Non existing form with uid %s"}`
+	responsePayloadUnauthorized = `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`
+)
+
 type typeformServer struct {
 	forms      map[string]*typeform.Form
 	httpServer *httptest.Server
@@ -24,6 +32,7 @@ func newFakeTypeformServer() *typeformServer {
 	r.Use(accessTokenMiddleware)
 
 	r.HandleFunc("/forms", srv.createFormHandler).Methods(http.MethodPost)
+	r.HandleFunc("/forms/{id}", srv.deleteFormHandler).Methods(http.MethodDelete)
 
 	srv.httpServer = httptest.NewServer(r)
 
@@ -34,7 +43,7 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("User-Agent") == "" {
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprint(w, `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`)
+			fmt.Fprint(w, responsePayloadUnauthorized)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -43,7 +52,17 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 
 func (s *typeformServer) createFormHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, `{"id": "fakeFormID"}`)
+	fmt.Fprint(w, `{"id": "`+formIDCreatedForm+`"}`)
+}
+
+func (s *typeformServer) deleteFormHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	if vars["id"] != formIDDeletedForm {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (s *typeformServer) close() {
