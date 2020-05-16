@@ -8,7 +8,7 @@ import (
 	"github.com/marotpam/typeform-go"
 )
 
-func TestItWillCreateForms(t *testing.T) {
+func TestCreateForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		c := newFakeServerClient(t)
 
@@ -19,6 +19,16 @@ func TestItWillCreateForms(t *testing.T) {
 		})
 		assert.Nil(t, err)
 
-		assert.NotEmpty(t, f.ID)
+		assert.Equal(t, formIDCreatedForm, f.ID)
+	})
+}
+
+func TestDeleteForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		c := newFakeServerClient(t)
+
+		svc := typeform.NewFormService(c)
+
+		assert.Nil(t, svc.Delete(formIDDeletedForm))
 	})
 }

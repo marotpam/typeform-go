@@ -30,3 +30,9 @@ func (s FormService) Create(f Form) (Form, error) {
 
 	return created, nil
 }
+
+func (s FormService) Delete(formID string) error {
+	req, _ := http.NewRequest(http.MethodDelete, "/forms/"+formID, nil)
+
+	return s.client.Do(req, nil)
+}
