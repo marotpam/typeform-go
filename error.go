@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+const (
+	CodeAuthenticationFailed = "AUTHENTICATION_FAILED"
+	CodeFormNotFound         = "FORM_NOT_FOUND"
+)
+
 type Error struct {
 	URL         string
 	Method      string

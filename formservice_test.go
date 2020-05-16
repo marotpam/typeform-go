@@ -10,9 +10,7 @@ import (
 
 func TestCreateForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := newFakeServerClient(t)
-
-		svc := typeform.NewFormService(c)
+		svc := typeform.NewFormService(newFakeServerClient(t))
 
 		f, err := svc.Create(typeform.Form{
 			Title: "my new form",
@@ -25,22 +23,29 @@ func TestCreateForm(t *testing.T) {
 
 func TestRetrieveForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := newFakeServerClient(t)
-
-		svc := typeform.NewFormService(c)
+		svc := typeform.NewFormService(newFakeServerClient(t))
 
 		f, err := svc.Retrieve(formIDRetrievedForm)
 		assert.Nil(t, err)
 
 		assert.Equal(t, formIDRetrievedForm, f.ID)
 	})
+	t.Run("not found error", func(t *testing.T) {
+		svc := typeform.NewFormService(newFakeServerClient(t))
+
+		_, err := svc.Retrieve("unknownFormID")
+		assert.NotNil(t, err)
+
+		tfErr, ok := err.(typeform.Error)
+		assert.True(t, ok)
+
+		assert.Equal(t, typeform.CodeFormNotFound, tfErr.Code)
+	})
 }
 
 func TestDeleteForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := newFakeServerClient(t)
-
-		svc := typeform.NewFormService(c)
+		svc := typeform.NewFormService(newFakeServerClient(t))
 
 		assert.Nil(t, svc.Delete(formIDDeletedForm))
 	})

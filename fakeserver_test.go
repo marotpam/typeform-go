@@ -53,12 +53,10 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *typeformServer) createFormHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, `{"id": "`+formIDCreatedForm+`"}`)
 }
 
 func (s *typeformServer) retrieveFormHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
 	vars := mux.Vars(r)
 	if vars["id"] != formIDRetrievedForm {
 		w.WriteHeader(http.StatusNotFound)
