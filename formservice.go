@@ -43,6 +43,23 @@ func (s FormService) Retrieve(formID string) (Form, error) {
 	return created, nil
 }
 
+func (s FormService) Update(f Form) (Form, error) {
+	b, err := json.Marshal(f)
+	if err != nil {
+		return Form{}, err
+	}
+
+	req, _ := http.NewRequest(http.MethodPut, "/forms/"+f.ID, bytes.NewBuffer(b))
+
+	var updated Form
+	err = s.client.Do(req, &updated)
+	if err != nil {
+		return Form{}, err
+	}
+
+	return updated, nil
+}
+
 func (s FormService) Delete(formID string) error {
 	req, _ := http.NewRequest(http.MethodDelete, "/forms/"+formID, nil)
 

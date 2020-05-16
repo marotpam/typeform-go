@@ -43,6 +43,20 @@ func TestRetrieveForm(t *testing.T) {
 	})
 }
 
+func TestUpdateForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		svc := typeform.NewFormService(newFakeServerClient(t))
+
+		f, err := svc.Update(typeform.Form{
+			ID:    formIDUpdatedForm,
+			Title: "updated form",
+		})
+		assert.Nil(t, err)
+
+		assert.Equal(t, formIDUpdatedForm, f.ID)
+	})
+}
+
 func TestDeleteForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		svc := typeform.NewFormService(newFakeServerClient(t))
