@@ -1,5 +1,26 @@
 package typeform
 
+const (
+	FieldTypeYesNo          = "yes_no"
+	FieldTypeShortText      = "short_text"
+	FieldTypeMultipleChoice = "multiple_choice"
+	FieldTypePictureChoice  = "picture_choice"
+	FieldTypeGroup          = "group"
+	FieldTypeEmail          = "email"
+	FieldTypeDropdown       = "dropdown"
+	FieldTypeLongText       = "long_text"
+	FieldTypeFileUpload     = "file_upload"
+	FieldTypeNumber         = "number"
+	FieldTypeWebsite        = "website"
+	FieldTypeLegal          = "legal"
+	FieldTypeDate           = "date"
+	FieldTypeRating         = "rating"
+	FieldTypeStatement      = "statement"
+	FieldTypePayment        = "payment"
+	FieldTypeOpinionScale   = "opinion_scale"
+	FieldTypePhoneNumber    = "phone_number"
+)
+
 type Form struct {
 	ID              string                 `json:"id,omitempty"`
 	Title           string                 `json:"title"`
