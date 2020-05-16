@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+
+	"github.com/google/go-querystring/query"
 )
 
 type FormService struct {
@@ -64,4 +66,22 @@ func (s FormService) Delete(formID string) error {
 	req, _ := http.NewRequest(http.MethodDelete, "/forms/"+formID, nil)
 
 	return s.client.Do(req, nil)
+}
+
+func (s FormService) List(p FormListParams) (FormList, error) {
+	v, err := query.Values(p)
+	if err != nil {
+		return FormList{}, err
+	}
+
+	req, _ := http.NewRequest(http.MethodGet, "/forms", nil)
+	req.URL.RawQuery = v.Encode()
+
+	var l FormList
+	err = s.client.Do(req, &l)
+	if err != nil {
+		return FormList{}, err
+	}
+
+	return l, err
 }

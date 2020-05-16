@@ -57,6 +57,17 @@ func TestUpdateForm(t *testing.T) {
 	})
 }
 
+func TestListForms(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		svc := typeform.NewFormService(newFakeServerClient(t))
+
+		list, err := svc.List(typeform.FormListParams{})
+		assert.Nil(t, err)
+
+		assert.Len(t, list.Items, 2)
+	})
+}
+
 func TestDeleteForm(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		svc := typeform.NewFormService(newFakeServerClient(t))
