@@ -2,8 +2,10 @@ package typeform_test
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -15,17 +17,16 @@ import (
 const (
 	formIDCreatedForm   = "createdFormID"
 	formIDRetrievedForm = "retrievedFormID"
-	formIDDeletedForm   = "formToDelete"
-	formIDUpdatedForm   = "formToUpdate"
+	formIDDeletedForm   = "deletedFormID"
+	formIDUpdatedForm   = "updatedFormID"
 
 	themeIDCreatedTheme   = "createdThemeID"
 	themeIDRetrievedTheme = "retrievedThemeID"
-	themeIDDeletedTheme   = "themeToDelete"
-	themeIDUpdatedTheme   = "themeToUpdate"
+	themeIDDeletedTheme   = "deletedThemeID"
+	themeIDUpdatedTheme   = "updatedThemeID"
 
-	responsePayloadFormNotFound  = `{"code":"FORM_NOT_FOUND","description":"Non existing form with uid %s"}`
-	responsePayloadThemeNotFound = `{"code":"THEME_NOT_FOUND","description":"Non existing theme with uid %s"}`
-	responsePayloadUnauthorized  = `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`
+	responsePayloadNotFound     = `{"code":"%s_NOT_FOUND","description":"Non existing %s with uid %s"}`
+	responsePayloadUnauthorized = `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`
 )
 
 type typeformServer struct {
@@ -39,17 +40,11 @@ func newFakeTypeformServer() *typeformServer {
 	r := mux.NewRouter()
 	r.Use(accessTokenMiddleware)
 
-	r.HandleFunc("/forms", srv.createFormHandler).Methods(http.MethodPost)
-	r.HandleFunc("/forms", srv.listFormsHandler).Methods(http.MethodGet)
-	r.HandleFunc("/forms/{id}", srv.retrieveFormHandler).Methods(http.MethodGet)
-	r.HandleFunc("/forms/{id}", srv.updateFormHandler).Methods(http.MethodPut)
-	r.HandleFunc("/forms/{id}", srv.deleteFormHandler).Methods(http.MethodDelete)
-
-	r.HandleFunc("/themes", srv.createThemeHandler).Methods(http.MethodPost)
-	r.HandleFunc("/themes", srv.listThemesHandler).Methods(http.MethodGet)
-	r.HandleFunc("/themes/{id}", srv.retrieveThemeHandler).Methods(http.MethodGet)
-	r.HandleFunc("/themes/{id}", srv.updateThemeHandler).Methods(http.MethodPut)
-	r.HandleFunc("/themes/{id}", srv.deleteThemeHandler).Methods(http.MethodDelete)
+	r.HandleFunc("/{collection:forms|themes}", srv.createHandler).Methods(http.MethodPost)
+	r.HandleFunc("/{collection:forms|themes}", srv.listHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|themes}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|themes}/{id}", srv.updateHandler).Methods(http.MethodPut)
+	r.HandleFunc("/{collection:forms|themes}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
 
 	srv.httpServer = httptest.NewServer(r)
 
@@ -67,77 +62,42 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *typeformServer) createFormHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "_fixtures/form_create.json")
+func (s *typeformServer) createHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, getResourceFixture(r, "create"))
 }
 
-func (s *typeformServer) listFormsHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "_fixtures/form_list.json")
+func (s *typeformServer) listHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, fmt.Sprintf("_fixtures/%s_list.json", getResource(r)))
 }
 
-func (s *typeformServer) retrieveFormHandler(w http.ResponseWriter, r *http.Request) {
+func (s *typeformServer) retrieveHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	if vars["id"] != formIDRetrievedForm {
+	if strings.HasPrefix(vars["id"], "unknown") {
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
+		resource := getResource(r)
+		fmt.Fprintf(w, responsePayloadNotFound, strings.ToUpper(resource), resource, vars["id"])
 		return
 	}
-	fmt.Fprint(w, `{"id": "`+formIDRetrievedForm+`"}`)
+	fmt.Fprint(w, getResourceFixture(r, "retrieve"))
 }
 
-func (s *typeformServer) updateFormHandler(w http.ResponseWriter, r *http.Request) {
+func (s *typeformServer) updateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	if vars["id"] != formIDUpdatedForm {
+	if strings.HasPrefix(vars["id"], "unknown") {
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
+		resource := getResource(r)
+		fmt.Fprintf(w, responsePayloadNotFound, strings.ToUpper(resource), resource, vars["id"])
 		return
 	}
-	fmt.Fprint(w, `{"id": "`+formIDUpdatedForm+`"}`)
+	fmt.Fprint(w, getResourceFixture(r, "update"))
 }
 
-func (s *typeformServer) deleteFormHandler(w http.ResponseWriter, r *http.Request) {
+func (s *typeformServer) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	if vars["id"] != formIDDeletedForm {
+	if strings.HasPrefix(vars["id"], "unknown") {
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
-		return
-	}
-	w.WriteHeader(http.StatusNoContent)
-}
-
-func (s *typeformServer) createThemeHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "_fixtures/theme_create.json")
-}
-
-func (s *typeformServer) listThemesHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "_fixtures/theme_list.json")
-}
-
-func (s *typeformServer) retrieveThemeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	if vars["id"] != themeIDRetrievedTheme {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadThemeNotFound, vars["id"])
-		return
-	}
-	fmt.Fprint(w, `{"id": "`+themeIDRetrievedTheme+`"}`)
-}
-
-func (s *typeformServer) updateThemeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	if vars["id"] != themeIDUpdatedTheme {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadThemeNotFound, vars["id"])
-		return
-	}
-	fmt.Fprint(w, `{"id": "`+themeIDUpdatedTheme+`"}`)
-}
-
-func (s *typeformServer) deleteThemeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	if vars["id"] != themeIDDeletedTheme {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, responsePayloadFormNotFound, vars["id"])
+		resource := getResource(r)
+		fmt.Fprintf(w, responsePayloadNotFound, strings.ToUpper(resource), resource, vars["id"])
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
@@ -145,6 +105,22 @@ func (s *typeformServer) deleteThemeHandler(w http.ResponseWriter, r *http.Reque
 
 func (s *typeformServer) close() {
 	s.httpServer.Close()
+}
+
+// getResource will return the resource of a given request path, for example, `form` is the resource
+// for paths `/forms` and `/forms/{id}`
+func getResource(r *http.Request) string {
+	vars := mux.Vars(r)
+	return strings.TrimSuffix(vars["collection"], "s")
+}
+
+func getResourceFixture(r *http.Request, action string) string {
+	resource := getResource(r)
+	b, _ := ioutil.ReadFile(fmt.Sprintf("_fixtures/%s.json", resource))
+
+	id := fmt.Sprintf("%sd%sID", action, strings.Title(resource))
+
+	return strings.Replace(string(b), "{{id}}", id, 1)
 }
 
 func newFakeServerClient(t *testing.T) typeform.Client {

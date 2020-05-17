@@ -7,7 +7,7 @@
   },
   "font": "Arial",
   "has_transparent_button": false,
-  "id": "createdThemeID",
+  "id": "{{id}}",
   "name": "Public theme",
   "visibility": "public"
 }
