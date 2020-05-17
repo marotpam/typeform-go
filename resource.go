@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	resourceForms = "forms"
+	resourceForms  = "forms"
+	resourceThemes = "themes"
 )
 
 type resource struct {

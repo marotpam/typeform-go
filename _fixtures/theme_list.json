@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "colors": {
+        "answer": "#ffffff",
+        "background": "#ffffff",
+        "button": "#ffffff",
+        "question": "#ffffff"
+      },
+      "font": "Acme",
+      "has_transparent_button": false,
+      "id": "FzMRx2",
+      "name": "string",
+      "visibility": "private"
+    }
+  ],
+  "page_count": 3,
+  "total_items": 6
+}

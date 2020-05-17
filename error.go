@@ -10,6 +10,7 @@ import (
 const (
 	CodeAuthenticationFailed = "AUTHENTICATION_FAILED"
 	CodeFormNotFound         = "FORM_NOT_FOUND"
+	CodeThemeNotFound        = "THEME_NOT_FOUND"
 )
 
 type Error struct {

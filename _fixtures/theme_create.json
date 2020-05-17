@@ -1,0 +1,13 @@
+{
+  "colors": {
+    "answer": "#181B28",
+    "background": "#FFFFFF",
+    "button": "#81B8B9",
+    "question": "#81B8B9"
+  },
+  "font": "Arial",
+  "has_transparent_button": false,
+  "id": "createdThemeID",
+  "name": "Public theme",
+  "visibility": "public"
+}
