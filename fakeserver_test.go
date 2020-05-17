@@ -56,7 +56,7 @@ func accessTokenMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *typeformServer) createFormHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, `{"id": "`+formIDCreatedForm+`"}`)
+	http.ServeFile(w, r, "_fixtures/form_create.json")
 }
 
 func (s *typeformServer) listFormsHandler(w http.ResponseWriter, r *http.Request) {
