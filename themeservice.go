@@ -22,9 +22,9 @@ func (s ThemeService) Create(t Theme) (Theme, error) {
 	return created, nil
 }
 
-func (s ThemeService) Retrieve(formID string) (Theme, error) {
+func (s ThemeService) Retrieve(themeID string) (Theme, error) {
 	var created Theme
-	err := s.resource.retrieve(resourceThemes, formID, &created)
+	err := s.resource.retrieve(resourceThemes, themeID, &created)
 	if err != nil {
 		return Theme{}, err
 	}
@@ -42,8 +42,8 @@ func (s ThemeService) Update(t Theme) (Theme, error) {
 	return updated, nil
 }
 
-func (s ThemeService) Delete(formID string) error {
-	return s.resource.delete(resourceThemes, formID)
+func (s ThemeService) Delete(themeID string) error {
+	return s.resource.delete(resourceThemes, themeID)
 }
 
 func (s ThemeService) List(p ThemeListParams) (ThemeList, error) {
