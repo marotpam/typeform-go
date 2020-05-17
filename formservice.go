@@ -1,31 +1,20 @@
 package typeform
 
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-
-	"github.com/google/go-querystring/query"
-)
-
 type FormService struct {
-	client Client
+	resource
 }
 
 func NewFormService(client Client) *FormService {
-	return &FormService{client: client}
+	return &FormService{
+		resource: resource{
+			client: client,
+		},
+	}
 }
 
 func (s FormService) Create(f Form) (Form, error) {
-	b, err := json.Marshal(f)
-	if err != nil {
-		return Form{}, err
-	}
-
-	req, _ := http.NewRequest(http.MethodPost, "/forms", bytes.NewBuffer(b))
-
 	var created Form
-	err = s.client.Do(req, &created)
+	err := s.resource.create(resourceForms, f, &created)
 	if err != nil {
 		return Form{}, err
 	}
@@ -34,10 +23,8 @@ func (s FormService) Create(f Form) (Form, error) {
 }
 
 func (s FormService) Retrieve(formID string) (Form, error) {
-	req, _ := http.NewRequest(http.MethodGet, "/forms/"+formID, nil)
-
 	var created Form
-	err := s.client.Do(req, &created)
+	err := s.resource.retrieve(resourceForms, formID, &created)
 	if err != nil {
 		return Form{}, err
 	}
@@ -46,15 +33,8 @@ func (s FormService) Retrieve(formID string) (Form, error) {
 }
 
 func (s FormService) Update(f Form) (Form, error) {
-	b, err := json.Marshal(f)
-	if err != nil {
-		return Form{}, err
-	}
-
-	req, _ := http.NewRequest(http.MethodPut, "/forms/"+f.ID, bytes.NewBuffer(b))
-
 	var updated Form
-	err = s.client.Do(req, &updated)
+	err := s.resource.update(resourceForms, f.ID, f, &updated)
 	if err != nil {
 		return Form{}, err
 	}
@@ -63,22 +43,12 @@ func (s FormService) Update(f Form) (Form, error) {
 }
 
 func (s FormService) Delete(formID string) error {
-	req, _ := http.NewRequest(http.MethodDelete, "/forms/"+formID, nil)
-
-	return s.client.Do(req, nil)
+	return s.resource.delete(resourceForms, formID)
 }
 
 func (s FormService) List(p FormListParams) (FormList, error) {
-	v, err := query.Values(p)
-	if err != nil {
-		return FormList{}, err
-	}
-
-	req, _ := http.NewRequest(http.MethodGet, "/forms", nil)
-	req.URL.RawQuery = v.Encode()
-
 	var l FormList
-	err = s.client.Do(req, &l)
+	err := s.resource.list(resourceForms, p, &l)
 	if err != nil {
 		return FormList{}, err
 	}
