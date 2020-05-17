@@ -1,0 +1,35 @@
+{
+  "total_items": 1,
+  "page_count": 1,
+  "items": [
+    {
+      "landing_id": "yg7uthsr02eqsoyg7uth99ta5wyezlcb",
+      "token": "yg7uthsr02eqsoyg7uth99ta5wyezlcb",
+      "response_id": "yg7uthsr02eqsoyg7uth99ta5wyezlcb",
+      "landed_at": "2020-05-17T16:14:39Z",
+      "submitted_at": "2020-05-17T16:14:40Z",
+      "metadata": {
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36",
+        "platform": "other",
+        "referer": "https://subdomain.typeform.com/to/formID",
+        "network_id": "e717f50b1f",
+        "browser": "default"
+      },
+      "hidden": {},
+      "calculated": {
+        "score": 0
+      },
+      "answers": [
+        {
+          "field": {
+            "id": "P2OGHbtqqC7X",
+            "ref": "092bcdc96fe0298a",
+            "type": "yes_no"
+          },
+          "type": "boolean",
+          "boolean": true
+        }
+      ]
+    }
+  ]
+}

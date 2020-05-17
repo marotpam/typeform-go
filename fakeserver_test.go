@@ -49,16 +49,22 @@ func newFakeTypeformServer() *typeformServer {
 	r := mux.NewRouter()
 	r.Use(accessTokenMiddleware)
 
+	// 'create API' resources
 	r.HandleFunc("/{collection:forms|images|themes|workspaces}", srv.createHandler).Methods(http.MethodPost)
 	r.HandleFunc("/{collection:forms|images|themes|workspaces}", srv.listHandler).Methods(http.MethodGet)
 	r.HandleFunc("/{collection:forms|images|themes|workspaces}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
 	r.HandleFunc("/{collection:forms|themes}/{id}", srv.updateHandler).Methods(http.MethodPut)
 	r.HandleFunc("/{collection:forms|images|themes|workspaces}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
 
+	// image format endpoint
 	r.HandleFunc(
 		"/{collection:images}/{id}/{format:image|background|choice}/{size:default|mobile|thumbnail}",
 		srv.retrieveFormattedImageHandler,
 	).Methods(http.MethodGet)
+
+	// 'results API' endpoints
+	r.HandleFunc("/forms/{id}/responses", srv.retrieveResponsesHandler).Methods(http.MethodGet)
+	r.HandleFunc("/forms/{id}/responses", srv.deleteHandler).Methods(http.MethodDelete)
 
 	srv.httpServer = httptest.NewServer(r)
 
@@ -119,6 +125,10 @@ func (s *typeformServer) deleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *typeformServer) retrieveResponsesHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "_fixtures/response_list.json")
 }
 
 func (s *typeformServer) close() {

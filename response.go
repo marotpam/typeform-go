@@ -2,25 +2,6 @@ package typeform
 
 import "time"
 
-type ResponseListParams struct {
-	PageSize            int        `query:"page_size,omitempty"`
-	Since               *time.Time `query:"since,omitempty"`
-	Until               *time.Time `query:"until,omitempty"`
-	After               *time.Time `query:"after,omitempty"`
-	Before              *time.Time `query:"before,omitempty"`
-	IncludedResponseIDs string     `json:"included_response_ids"`
-	Completed           *bool      `query:"completed,omitempty"`
-	Sort                string     `query:"sort,omitempty"`
-	Query               string     `query:"query,omitempty"`
-	Fields              string     `query:"fields,omitempty"`
-}
-
-type ResponseList struct {
-	TotalItems int        `json:"total_items"`
-	PageCount  int        `json:"page_count"`
-	Items      []Response `json:"items"`
-}
-
 type Response struct {
 	LandingID   string    `json:"landing_id"`
 	Token       string    `json:"token"`
