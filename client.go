@@ -186,6 +186,7 @@ func (c Client) applyDefaults(req *http.Request) {
 	req.URL.Path = baseURL.Path + req.URL.Path
 	req.Header.Add("User-Agent", defaultUserAgent)
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
+	req.Header.Set("Content-Type", "application/json")
 }
 
 // hasBeenProcessed will return true when a request has been processed by typeform as intended.

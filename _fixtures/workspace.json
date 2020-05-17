@@ -1,0 +1,20 @@
+{
+  "id": "{{id}}",
+  "name": "my workspace",
+  "account_id": "01D8JT0NZKG2NE8ETEND223RRM",
+  "default": false,
+  "forms": {
+    "href": "https://api.typeform.com/forms?workspace_id=NJRkt2"
+  },
+  "members": [
+    {
+      "email": "email@typeform.com",
+      "name": "name",
+      "role": "owner"
+    }
+  ],
+  "self": {
+    "href": "https://api.typeform.com/workspaces/NJRkt2"
+  },
+  "shared": false
+}

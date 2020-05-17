@@ -29,6 +29,11 @@ const (
 	themeIDDeletedTheme   = "deletedThemeID"
 	themeIDUpdatedTheme   = "updatedThemeID"
 
+	workspaceIDCreatedWorkspace   = "createdWorkspaceID"
+	workspaceIDRetrievedWorkspace = "retrievedWorkspaceID"
+	workspaceIDDeletedWorkspace   = "deletedWorkspaceID"
+	workspaceIDUpdatedWorkspace   = "updatedWorkspaceID"
+
 	responsePayloadNotFound     = `{"code":"%s_NOT_FOUND","description":"Non existing %s with uid %s"}`
 	responsePayloadUnauthorized = `{"code":"AUTHENTICATION_FAILED","description":"Authentication credentials not found on the Request Headers"}`
 )
@@ -44,11 +49,11 @@ func newFakeTypeformServer() *typeformServer {
 	r := mux.NewRouter()
 	r.Use(accessTokenMiddleware)
 
-	r.HandleFunc("/{collection:forms|images|themes}", srv.createHandler).Methods(http.MethodPost)
-	r.HandleFunc("/{collection:forms|images|themes}", srv.listHandler).Methods(http.MethodGet)
-	r.HandleFunc("/{collection:forms|images|themes}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|images|themes|workspaces}", srv.createHandler).Methods(http.MethodPost)
+	r.HandleFunc("/{collection:forms|images|themes|workspaces}", srv.listHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|images|themes|workspaces}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
 	r.HandleFunc("/{collection:forms|themes}/{id}", srv.updateHandler).Methods(http.MethodPut)
-	r.HandleFunc("/{collection:forms|images|themes}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
+	r.HandleFunc("/{collection:forms|images|themes|workspaces}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
 
 	r.HandleFunc(
 		"/{collection:images}/{id}/{format:image|background|choice}/{size:default|mobile|thumbnail}",

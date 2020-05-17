@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "{{id}}",
+      "name": "my workspace",
+      "default": false,
+      "forms": {
+        "href": "https://api.typeform.com/forms?workspace_id={{id}}"
+      },
+      "account_id": "01D8JT0NZKG2NE8ETEND223RRM",
+      "self": {
+        "href": "https://api.typeform.com/workspaces/AvjKaH"
+      },
+      "shared": false
+    }
+  ],
+  "page_count": 1,
+  "total_items": 1
+}

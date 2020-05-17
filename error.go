@@ -12,6 +12,7 @@ const (
 	CodeFormNotFound         = "FORM_NOT_FOUND"
 	CodeImageNotFound        = "IMAGE_NOT_FOUND"
 	CodeThemeNotFound        = "THEME_NOT_FOUND"
+	CodeWorkspaceNotFound    = "WORKSPACE_NOT_FOUND"
 )
 
 type Error struct {
