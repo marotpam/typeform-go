@@ -20,6 +20,10 @@ const (
 	formIDDeletedForm   = "deletedFormID"
 	formIDUpdatedForm   = "updatedFormID"
 
+	imageIDCreatedImage   = "createdImageID"
+	imageIDRetrievedImage = "retrievedImageID"
+	imageIDDeletedImage   = "deletedImageID"
+
 	themeIDCreatedTheme   = "createdThemeID"
 	themeIDRetrievedTheme = "retrievedThemeID"
 	themeIDDeletedTheme   = "deletedThemeID"
@@ -40,11 +44,16 @@ func newFakeTypeformServer() *typeformServer {
 	r := mux.NewRouter()
 	r.Use(accessTokenMiddleware)
 
-	r.HandleFunc("/{collection:forms|themes}", srv.createHandler).Methods(http.MethodPost)
-	r.HandleFunc("/{collection:forms|themes}", srv.listHandler).Methods(http.MethodGet)
-	r.HandleFunc("/{collection:forms|themes}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|images|themes}", srv.createHandler).Methods(http.MethodPost)
+	r.HandleFunc("/{collection:forms|images|themes}", srv.listHandler).Methods(http.MethodGet)
+	r.HandleFunc("/{collection:forms|images|themes}/{id}", srv.retrieveHandler).Methods(http.MethodGet)
 	r.HandleFunc("/{collection:forms|themes}/{id}", srv.updateHandler).Methods(http.MethodPut)
-	r.HandleFunc("/{collection:forms|themes}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
+	r.HandleFunc("/{collection:forms|images|themes}/{id}", srv.deleteHandler).Methods(http.MethodDelete)
+
+	r.HandleFunc(
+		"/{collection:images}/{id}/{format:image|background|choice}/{size:default|mobile|thumbnail}",
+		srv.retrieveFormattedImageHandler,
+	).Methods(http.MethodGet)
 
 	srv.httpServer = httptest.NewServer(r)
 
@@ -78,6 +87,10 @@ func (s *typeformServer) retrieveHandler(w http.ResponseWriter, r *http.Request)
 		fmt.Fprintf(w, responsePayloadNotFound, strings.ToUpper(resource), resource, vars["id"])
 		return
 	}
+	fmt.Fprint(w, getResourceFixture(r, "retrieve"))
+}
+
+func (s *typeformServer) retrieveFormattedImageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, getResourceFixture(r, "retrieve"))
 }
 
