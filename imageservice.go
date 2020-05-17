@@ -27,9 +27,9 @@ func (s ImageService) Create(p CreateImageParams) (Image, error) {
 	return created, nil
 }
 
-func (s ImageService) Retrieve(formID string) (Image, error) {
+func (s ImageService) Retrieve(imageID string) (Image, error) {
 	var created Image
-	err := s.resource.retrieve(resourceImages, formID, &created)
+	err := s.resource.retrieve(resourceImages, imageID, &created)
 	if err != nil {
 		return Image{}, err
 	}
@@ -56,8 +56,8 @@ func (s ImageService) RetrieveFormat(imageID, format, size string) (Image, error
 	return i, nil
 }
 
-func (s ImageService) Delete(formID string) error {
-	return s.resource.delete(resourceImages, formID)
+func (s ImageService) Delete(imageID string) error {
+	return s.resource.delete(resourceImages, imageID)
 }
 
 func (s ImageService) List() (ImageList, error) {
