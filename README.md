@@ -1,5 +1,5 @@
 # typeform-go
-Non-official Go library for the Typeform API. https://developer.typeform.com/
+Non-official Go library for the Typeform API https://developer.typeform.com/
 
 ## Installation
 ```shell
